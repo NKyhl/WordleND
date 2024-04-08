@@ -3,5 +3,26 @@
 {% block title %}Sign up for WorNDly!{% endblock %}
 
 {% block content %}
-<p>Welcome to WorNDly</p>
+<h1>WorNDly</h1>
+<p>Sign Up!</p>
+
+<form action="{% url 'wordleND:create_user' %}" method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username">        
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="text" id="email">        
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="text" id="password">
+    </div>
+    <input type="submit" value="Sign Up">
+    {% if error_message %}.
+        <p><strong>{{ error_message }}</strong></p>
+    {% endif %}
+</form>
 {% endblock %}
