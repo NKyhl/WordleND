@@ -15,6 +15,21 @@
 {% endblock %}
 
 {% block content %}
-<p>Welcome to WorNDly</p>
-<p>Sign Up Page</p>
+
+{% if form.errors %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    There was an error with your form.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+
+<div class="shadow p-4 mb-5 bg-body rounded">
+    <h1>Sign Up!</h1>
+    <form action="{% url 'signup' %}" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <br>
+        <input type="submit" value="Create Player" class="btn btn-secondary">
+    </form>
+</div>
 {% endblock %}

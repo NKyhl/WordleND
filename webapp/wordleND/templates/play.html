@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Play WorNDly!{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<h1>Play WorNDly</h1>
+<p>Play page</p>
+{% else %}
+<h1>Sorry, You Must Be Signed In To Play.</h1>
+<button class="btn btn-primary"><a href="/signin" class="nav-link">Sign In</a></button>
+{% endif %}
+{% endblock %}
