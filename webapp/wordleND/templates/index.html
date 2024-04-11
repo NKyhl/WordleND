@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to WorNDly!{% endblock %}
+
+{% block content %}
+<div class="px-4 py-5 my-5 text-center">
+    {% load static %}
+    <img class="d-block mx-auto mb-4" src="{% static 'ndlogo.png' %}" alt="Notre Dame Logo" width="72" height="57">
+    <h1 class="display-5 fw-bold text-body-emphasis">
+        Welcome to WorNDly!
+    </h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">
+            Your favorite game, now in multiple-languages!
+        </p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <button type="button" class="btn btn-primary btn-lg px-4 gap-3">
+                <a href="/signup" class="nav-link">Sign Up</a>
+            </button>
+            <button type="button" class="btn btn-outline-secondary btn-lg px-4">
+                <a href="/signin" class="nav-link">Sign In</a>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
