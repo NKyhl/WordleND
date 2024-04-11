@@ -1,58 +1,34 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django.urls import reverse
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 from .models import User
+from .forms import SignUpUserForm
 
 # Create your views here.
 def home(request):
-    return render(request, "index.html")
+    return render(request, "index.html", {})
+
+def play(request):
+    return render(request, "play.html", {})
 
 def signup(request):
-    return render(request, "signup.html")
+    if request.method == "POST":
+        form = SignUpUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            messages.success(request, ("Account Created!"))
+            print(f'LOG - user {username} created!')
+            return redirect('play')
+    else:
+        form = SignUpUserForm()
+
+    return render(request, "signup.html", {'form': form})
 
 def signin(request):
-    return render(request, "signin.html")
-
-def create_user(request):
-    username = request.POST['username']
-    email = request.POST['email']
-    password = request.POST['password']
-
-    # Validate input
-    if not username:
-        return render(request, 'wordleND/signup.html', {
-            'error_message': "You didn't enter a username",
-        })
-    if not email or '@' not in email:
-        return render(request, 'wordleND/signup.html', {
-            'error_message': "You didn't enter a valid email",
-        })
-    if not password:
-        return render(request, 'wordleND/signup.html', {
-            'error_message': "You didn't enter a password",
-        })
-    
-    # Check to see if a user already exists with this username
-    username_taken = False # TODO
-
-    if username_taken:
-        return render(request, 'wordleND/signup.html', {
-            'error_message': "Sorry, this username is taken",
-        })
-    
-    # Check to see if a user already exists with this email
-    email_taken = False # TODO
-
-    if email_taken:
-        return render(request, 'wordleND/signup.html', {
-            'error_message': "An account already exists with this email",
-        })
-
-    # Create user
-    user = User.objects.create_user(
-        username=username,
-        email=email,
-        password=password
-    )
-
-    return HttpResponseRedirect(reverse('wordleND:play.html'))
+    return render(request, "signin.html", {})
