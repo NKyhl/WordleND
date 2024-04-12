@@ -37,8 +37,8 @@ def signin(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('signin')
+            return redirect('play')
         else:
-            messages.success(request, ("There Was An Error Logging In, Try Again..."))
-            return redirect('signin')
+            messages.error(request, ("Invalid Credentials, Try Again..."))
+
     return render(request, "signin.html", {})
