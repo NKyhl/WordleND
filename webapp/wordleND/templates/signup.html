@@ -3,33 +3,59 @@
 {% block title %}Sign up for WorNDly!{% endblock %}
 
 {% block nav-pills %}
-<li class="nav-item">
-    <a href="/" class="nav-link" aria-current="page">Home</a>
-</li>
-<li class="nav-item">
-    <a href="/signup" class="nav-link active" aria-current="page">Sign Up</a>
-</li>
-<li class="nav-item">
-    <a href="/signin" class="nav-link" aria-current="page">Sign In</a>
-</li>
+{% if user.is_authenticated %}
+    <li class="nav-item">
+        <a href="/play" class="nav-link active" aria-current="page">Play</a>
+    </li>
+    <li class="nav-item">
+        <a href="/signout" class="nav-link" aria-current="page">Sign Out</a>
+    </li>
+{% else %}
+    <li class="nav-item">
+        <a href="/" class="nav-link" aria-current="page">Home</a>
+    </li>
+    <li class="nav-item">
+        <a href="/signup" class="nav-link active" aria-current="page">Sign Up</a>
+    </li>
+    <li class="nav-item">
+        <a href="/signin" class="nav-link" aria-current="page">Sign In</a>
+    </li>
+{% endif %}
 {% endblock %}
 
 {% block content %}
-
-{% if form.errors %}
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-    There was an error with your form.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+{% if user.is_authenticated %}
+<div class="px-4 py-5 my-5 text-center">
+    <h1 class="display-5 fw-bold text-body-emphasis">
+        You're already signed in!
+    </h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">
+            Please sign out before creating a new account.
+        </p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <button type="button" class="btn btn-primary btn-lg px-4 gap-3">
+                <a href="/signout" class="nav-link active">Sign Out</a>
+            </button>
+        </div>
+    </div>
 </div>
+{% else %}
+    {% if form.errors %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        There was an error with your form.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <div class="shadow p-4 mb-5 bg-body rounded">
+        <h1>Sign Up!</h1>
+        <form action="{% url 'signup' %}" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <br>
+            <input type="submit" value="Create Player" class="btn btn-secondary">
+        </form>
+    </div>
 {% endif %}
-
-<div class="shadow p-4 mb-5 bg-body rounded">
-    <h1>Sign Up!</h1>
-    <form action="{% url 'signup' %}" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <br>
-        <input type="submit" value="Create Player" class="btn btn-secondary">
-    </form>
-</div>
 {% endblock %}

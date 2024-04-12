@@ -14,12 +14,18 @@
             Your favorite game, now in multiple-languages!
         </p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            {% if user.is_authenticated %}
+            <button type="button" class="btn btn-primary btn-lg px-4 gap-3">
+                <a href="/play" class="nav-link active">Play</a>
+            </button>
+            {% else %}
             <button type="button" class="btn btn-primary btn-lg px-4 gap-3">
                 <a href="/signup" class="nav-link">Sign Up</a>
             </button>
             <button type="button" class="btn btn-outline-secondary btn-lg px-4">
                 <a href="/signin" class="nav-link">Sign In</a>
             </button>
+            {% endif %}
         </div>
     </div>
 </div>

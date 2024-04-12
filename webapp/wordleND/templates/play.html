@@ -2,12 +2,46 @@
 
 {% block title %}Play WorNDly!{% endblock %}
 
+{% block nav-pills %}
+{% if user.is_authenticated %}
+    <li class="nav-item">
+        <a href="/play" class="nav-link active" aria-current="page">Play</a>
+    </li>
+    <li class="nav-item">
+        <a href="/signout" class="nav-link" aria-current="page">Sign Out</a>
+    </li>
+{% else %}
+    <li class="nav-item">
+        <a href="/signup" class="nav-link" aria-current="page">Sign Up</a>
+    </li>
+    <li class="nav-item">
+        <a href="/signin" class="nav-link" aria-current="page">Sign In</a>
+    </li>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 {% if user.is_authenticated %}
 <h1>Play WorNDly</h1>
 <p>Play page</p>
 {% else %}
-<h1>Sorry, You Must Be Signed In To Play.</h1>
-<button class="btn btn-primary"><a href="/signin" class="nav-link">Sign In</a></button>
+<div class="px-4 py-5 my-5 text-center">
+    <h1 class="display-5 fw-bold text-body-emphasis">
+        Sorry, You Must Be Signed In To Play!
+    </h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">
+            Please sign in or create an account!
+        </p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <button type="button" class="btn btn-primary btn-lg px-4 gap-3">
+                <a href="/signin" class="nav-link active">Sign Up</a>
+            </button>
+            <button type="button" class="btn btn-primary btn-lg px-4 gap-3">
+                <a href="/signin" class="nav-link">Sign In</a>
+            </button>
+        </div>
+    </div>
+</div>
 {% endif %}
 {% endblock %}
