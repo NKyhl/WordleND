@@ -31,4 +31,14 @@ def signup(request):
     return render(request, "signup.html", {'form': form})
 
 def signin(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('signin')
+        else:
+            messages.success(request, ("There Was An Error Logging In, Try Again..."))
+            return redirect('signin')
     return render(request, "signin.html", {})

@@ -16,5 +16,21 @@
 
 {% block content %}
 <p>Welcome to WorNDly</p>
-<p>Sign In Page</p>
+
+    <div class="shadow p-4 mb-5 bg-body rounded">
+        <h1>Sign In</h1>
+        <form action="{% url 'signin' %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Username</label>
+                <input type="text" class="form-control" name="username" aria-describedby="emailHelp">
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Password</label>
+                <input type="password" class="form-control" name="password">
+              </div>
+            <br>
+            <input type="submit" value="Submit" class="btn btn-secondary">
+        </form>
+    </div>
 {% endblock %}
