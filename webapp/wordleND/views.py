@@ -31,4 +31,14 @@ def signup(request):
     return render(request, "signup.html", {'form': form})
 
 def signin(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('play')
+        else:
+            messages.error(request, ("Invalid Credentials, Try Again..."))
+
     return render(request, "signin.html", {})
