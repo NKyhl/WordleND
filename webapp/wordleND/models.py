@@ -10,7 +10,7 @@ class Profile(models.Model):
 
 class Play(models.Model):
     '''Represents one play of the game and its stats'''
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     game_date = models.DateTimeField('date played')
     outcome = models.BooleanField(default=False)
     attempts = models.IntegerField(default=0)
