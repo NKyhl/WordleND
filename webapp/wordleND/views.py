@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from .models import User
@@ -42,3 +42,8 @@ def signin(request):
             messages.error(request, ("Invalid Credentials, Try Again..."))
 
     return render(request, "signin.html", {})
+
+def signout(request):
+    logout(request)
+    messages.success(request, ("You Logged Out!"))
+    return redirect('home')
