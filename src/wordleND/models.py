@@ -15,6 +15,7 @@ class Play(models.Model):
     outcome = models.BooleanField(default=False)
     attempts = models.IntegerField(default=0)
     in_progress = models.BooleanField(default=True)
+    language = models.CharField(max_length=2, default='en') # de, es, fr, pt, en
 
 class GameState(models.Model):
     play = models.ForeignKey(Play, on_delete=models.CASCADE)
