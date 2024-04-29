@@ -194,10 +194,18 @@
         current_row_idx += 1;
 
         if (correct) {
-            alert('You Won in ' + (current_row_idx) + (current_row_idx == 1 ? ' attempt!' : ' attempts!'));
+            let attempts = current_row_idx;
             current_row_idx = 6;
+
+            // Delay victory message until animation is complete
+            setTimeout(function() {
+                alert('You Won in ' + (attempts) + (attempts == 1 ? ' attempt!' : ' attempts!'));
+            }, 500);
         } else if (current_row_idx >= 6) {
-            alert('The word was ' + word)
+            // Delay losing message until animation is complete
+            setTimeout(function() {
+                alert('The word was ' + word)
+            }, 500);
         } else {
             // Move to next row
             current_row = document.getElementById('row' + current_row_idx)
