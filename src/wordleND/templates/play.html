@@ -25,42 +25,42 @@
 <h1>Play WorNDly</h1>
 <p>Play page</p>
 <div class="d-flex justify-content-center align-items-center flex-column gap-2">
-    <div class="row gap-2">
+    <div id="row0" class="row gap-2">
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
     </div>
-    <div class="row gap-2">
+    <div id="row1" class="row gap-2">
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
     </div>
-    <div class="row gap-2">
+    <div id="row2" class="row gap-2">
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
     </div>
-    <div class="row gap-2">
+    <div id="row3" class="row gap-2">
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
     </div>
-    <div class="row gap-2">
+    <div id="row4" class="row gap-2">
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
     </div>
-    <div class="row gap-2">
+    <div id="row5" class="row gap-2">
         <div class="box"></div>
         <div class="box"></div>
         <div class="box"></div>
@@ -94,11 +94,11 @@
         <div id="enter" class="key key-lg">ENTER</div>
         <div id="z" class="key">Z</div>
         <div id="x" class="key">X</div>
-        <div id="c" class="key key-gold">C</div>
+        <div id="c" class="key">C</div>
         <div id="v" class="key">V</div>
         <div id="b" class="key">B</div>
-        <div id="n" class="key key-green">N</div>
-        <div id="m" class="key key-grey">M</div>
+        <div id="n" class="key">N</div>
+        <div id="m" class="key">M</div>
         <div id="del" class="key key-lg">DEL</div>
       </div>
 </div>
@@ -124,16 +124,106 @@
 {% endif %}
 
 <script>
+    let current_row_idx = 0;
+    let current_row = document.getElementById('row' + current_row_idx)
+    console.log(current_row);
+
+    let current_box_idx = 0;
+
     function process_key(char) {
         console.log(char);
+
+        // Game complete
+        if (current_row_idx >= 6) {
+            return;
+        }
+
+        // Row full
+        if (current_box_idx >= 5) {
+            return;
+        }
+        
+        // Fill box
+        current_box = current_row.children[current_box_idx]
+        current_box.innerText = char;
+        current_box.classList.add('box-active')
+        current_box_idx += 1
     }
 
     function process_enter(char) {
         console.log("SPECIAL - Enter");
+
+        // Game complete
+        if (current_row_idx >= 6) {
+            return;
+        }
+
+        // Row not full
+        if (current_box_idx < 5) {
+            alert('Not enough letters');
+            return;
+        }
+
+        // Color the current row
+        word = "MILES"
+        let boxes = current_row.children
+        let correct = true;
+        for (let i = 0; i < boxes.length; i++) {
+            boxes[i].classList.remove('box-active');
+
+            if (boxes[i].innerText == word[i]) {
+                boxes[i].classList.add('box-green');
+                document.getElementById(boxes[i].innerText.toLowerCase()).classList.add('key-green');
+            } else if (word.indexOf(boxes[i].innerText) != -1) {
+                boxes[i].classList.add('box-gold');
+                key = document.getElementById(boxes[i].innerText.toLowerCase())
+                if (!key.classList.contains('key-green')) {
+                    key.classList.add('key-gold');
+                }
+                correct = false;
+            } else {
+                boxes[i].classList.add('box-grey');
+                key = document.getElementById(boxes[i].innerText.toLowerCase())
+                if (!key.classList.contains('key-green') && !key.classList.contains('key-gold')) {
+                    key.classList.add('key-grey');
+                }
+                correct = false;
+            }
+        }
+
+        current_row_idx += 1;
+
+        if (correct) {
+            alert('You Won in ' + (current_row_idx) + (current_row_idx == 1 ? ' attempt!' : ' attempts!'));
+            current_row_idx = 6;
+        } else if (current_row_idx >= 6) {
+            alert('The word was ' + word)
+        } else {
+            // Move to next row
+            current_row = document.getElementById('row' + current_row_idx)
+            console.log(current_row);
+
+            current_box_idx = 0;
+        }
     }
 
     function process_del(char) {
-        console.log("SPECIAL - Del");
+        console.log("SPECIAL - Del " + current_box_idx);
+
+        // Game Complete
+        if (current_row_idx >= 6) {
+            return;
+        }
+
+        // No characters to delete
+        if (current_box_idx <= 0) {
+            return;
+        }
+
+        // Delete
+        current_box_idx -= 1
+        current_row.children[current_box_idx].innerText = '';
+        current_row.children[current_box_idx].classList.remove('box-active')
     }
 
     // Set up Click listener for keys
