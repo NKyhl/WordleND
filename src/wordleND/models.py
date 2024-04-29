@@ -14,3 +14,13 @@ class Play(models.Model):
     game_date = models.DateTimeField('date played')
     outcome = models.BooleanField(default=False)
     attempts = models.IntegerField(default=0)
+    in_progress = models.BooleanField(default=True)
+
+class GameState(models.Model):
+    play = models.ForeignKey(Play, on_delete=models.CASCADE)
+    attempt1 = models.CharField(max_length=5, blank=True, null=True, default='')
+    attempt2 = models.CharField(max_length=5, blank=True, null=True, default='')
+    attempt3 = models.CharField(max_length=5, blank=True, null=True, default='')
+    attempt4 = models.CharField(max_length=5, blank=True, null=True, default='')
+    attempt5 = models.CharField(max_length=5, blank=True, null=True, default='')
+    attempt6 = models.CharField(max_length=5, blank=True, null=True, default='')
