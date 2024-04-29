@@ -24,6 +24,84 @@
 {% if user.is_authenticated %}
 <h1>Play WorNDly</h1>
 <p>Play page</p>
+<div class="d-flex justify-content-center align-items-center flex-column gap-2">
+    <div class="row gap-2">
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+    </div>
+    <div class="row gap-2">
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+    </div>
+    <div class="row gap-2">
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+    </div>
+    <div class="row gap-2">
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+    </div>
+    <div class="row gap-2">
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+    </div>
+    <div class="row gap-2">
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+    </div>
+    <div class="row gap-2 mt-4">
+        <div id="q" class="key">Q</div>
+        <div id="w" class="key">W</div>
+        <div id="e" class="key">E</div>
+        <div id="r" class="key">R</div>
+        <div id="t" class="key">T</div>
+        <div id="y" class="key">Y</div>
+        <div id="u" class="key">U</div>
+        <div id="i" class="key">I</div>
+        <div id="o" class="key">O</div>
+        <div id="p" class="key">P</div>
+      </div>
+      <div class="row gap-2">
+        <div id="a" class="key">A</div>
+        <div id="s" class="key">S</div>
+        <div id="d" class="key">D</div>
+        <div id="f" class="key">F</div>
+        <div id="g" class="key">G</div>
+        <div id="h" class="key">H</div>
+        <div id="j" class="key">J</div>
+        <div id="k" class="key">K</div>
+        <div id="l" class="key">L</div>
+      </div>
+      <div class="row gap-2">
+        <div id="enter" class="key key-lg">ENTER</div>
+        <div id="z" class="key">Z</div>
+        <div id="x" class="key">X</div>
+        <div id="c" class="key key-gold">C</div>
+        <div id="v" class="key">V</div>
+        <div id="b" class="key">B</div>
+        <div id="n" class="key key-green">N</div>
+        <div id="m" class="key key-grey">M</div>
+        <div id="del" class="key key-lg">DEL</div>
+      </div>
+</div>
 {% else %}
 <div class="px-4 py-5 my-5 text-center">
     <h1 class="display-5 fw-bold text-body-emphasis">
@@ -44,4 +122,54 @@
     </div>
 </div>
 {% endif %}
+
+<script>
+    function process_key(char) {
+        console.log(char);
+    }
+
+    function process_enter(char) {
+        console.log("SPECIAL - Enter");
+    }
+
+    function process_del(char) {
+        console.log("SPECIAL - Del");
+    }
+
+    // Set up Click listener for keys
+    let keys = document.getElementsByClassName('key');
+    for (key of keys) {
+        let char = key.innerText;
+        if (char == 'ENTER' || char == 'DEL') {continue;}
+        key.addEventListener('click', () => process_key(char))
+    }
+
+    // Set up Click listener for Enter
+    let enterKey = document.getElementById('enter');
+    enterKey.addEventListener('click', () => process_enter())
+
+    // Set up Click listener for Delete
+    let deleteKey = document.getElementById('del');
+    deleteKey.addEventListener('click', () => process_del())
+
+    // Set up listeners for the physical keyboard
+    document.addEventListener('keypress', (event) => {
+        let alphabetic_regex = /^[a-zA-Z]+$/;
+
+        // Enter Key
+        if (event.key == 'Enter') {
+            process_enter();
+        // Alphabetic keys
+        } else if (alphabetic_regex.test(event.key)) {
+            process_key(event.key.toUpperCase())
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key == 'Backspace') {
+            process_del();
+        }
+    })
+
+</script>
 {% endblock %}
