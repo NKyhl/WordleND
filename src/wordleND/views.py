@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from .models import User
 from .forms import SignUpUserForm
+import random
 
 # Create your views here.
 def home(request):
@@ -47,3 +48,33 @@ def signout(request):
     logout(request)
     messages.success(request, ("You Logged Out!"))
     return redirect('home')
+
+def create_game(request):
+    # get user and preferred language from request
+    user = request.user
+    language = request.POST.get('language')
+    # open corresponding language file
+    if language == "en.txt":
+        language_path = f"../languages/{language}.txt"
+    elif language == "de.txt":
+        language_path = f"../languages/{language}.txt"
+    elif language == "es.txt":
+        language_path = f"../languages/{language}.txt"
+    elif language == "fr.txt":
+        language_path = f"../languages/{language}.txt"
+    elif lanugage == "pt.txt":
+        language_path = f"../languages/{language}.txt"
+    else:
+        return redirect('home')
+        
+    # pick random word from file
+    with open(language_path, "r") as file:
+        words = file.readlines()
+
+        random_word = random.choice(words).strip()
+    # create Play in database with user, word, language...
+    p = Play(user=user, word=random_word, language=language)
+    p.save()
+
+    #redirect to /play
+    return redirect('/play')
