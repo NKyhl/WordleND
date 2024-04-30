@@ -11,10 +11,12 @@ class Profile(models.Model):
 class Play(models.Model):
     '''Represents one play of the game and its stats'''
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    game_date = models.DateTimeField('date played')
+    game_date = models.DateTimeField('date played', auto_now_add=True, blank=True)
     outcome = models.BooleanField(default=False)
     attempts = models.IntegerField(default=0)
     in_progress = models.BooleanField(default=True)
+    language = models.CharField(max_length=2, default='en') # de, es, fr, pt, en
+    word = models.CharField(max_length=5, default='MILES')
 
 class GameState(models.Model):
     play = models.ForeignKey(Play, on_delete=models.CASCADE)
