@@ -28,5 +28,55 @@
             {% endif %}
         </div>
     </div>
+    <div class="col-lg-2 mx-auto" style="margin-top: 50px; background-color: #007bff; border-radius: 10px; padding: 20px;">
+        {% if user.is_authenticated %}
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="language" value="de.txt" id="flexRadioDefault1">
+            <label class="form-check-label fs-5" for="flexRadioDefault1" style="color: white">
+            German 🇩🇪
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="language"  value="es.txt" id="flexRadioDefault2" checked>
+            <label class="form-check-label fs-5" for="flexRadioDefault2" style="color: white">
+            Spanish 🇪🇸
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="language" value="fr.txt" id="flexRadioDefault1">
+            <label class="form-check-label fs-5" for="flexRadioDefault1" style="color: white">
+            French 🇫🇷
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="language" value="pt.txt" id="flexRadioDefault1">
+            <label class="form-check-label fs-5" for="flexRadioDefault1" style="color: white">
+            Portuguese 🇧🇷
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="language" value="en.txt" id="flexRadioDefault1">
+            <label class="form-check-label fs-5" for="flexRadioDefault1" style="color: white">
+            English 🇺🇸
+            </label>
+          </div>
+        {% endif %}
+    </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+
+    function handleLanguageSelection(event) {
+      const language = event.target.value;
+      loadLanguageFile(language);
+    }
+    
+    const languageRadios = document.querySelectorAll('input[name=language]');
+    languageRadios.forEach(function(radio) {
+      radio.addEventListener("change", handleLanguageSelection);
+    })
+  })
+</script>
 {% endblock %}
+
