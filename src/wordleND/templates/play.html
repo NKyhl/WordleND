@@ -130,6 +130,14 @@
 
     let current_box_idx = 0;
 
+    function get_guess(current_row) {
+        let w = '';
+        for (let i = 0; i < current_row.children.length; i++) {
+            w += current_row.children[i].innerText;
+        }
+        return w;
+    }
+
     function process_key(char) {
         console.log(char);
 
@@ -164,55 +172,69 @@
             return;
         }
 
-        // Color the current row
-        word = "MILES"
         let boxes = current_row.children
+        let word = get_guess(current_row);
         let correct = true;
-        for (let i = 0; i < boxes.length; i++) {
-            boxes[i].classList.remove('box-active');
 
-            if (boxes[i].innerText == word[i]) {
-                boxes[i].classList.add('box-green');
-                document.getElementById(boxes[i].innerText.toLowerCase()).classList.add('key-green');
-            } else if (word.indexOf(boxes[i].innerText) != -1) {
-                boxes[i].classList.add('box-gold');
-                key = document.getElementById(boxes[i].innerText.toLowerCase())
-                if (!key.classList.contains('key-green')) {
-                    key.classList.add('key-gold');
+        // Color the current row
+        fetch('/check-word', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": '{{csrf_token}}'
+            },
+            body: JSON.stringify({'word': word}),
+        }).then(
+            res => res.json()
+        ).then(
+            j => j['result']
+        ).then(
+            result => {
+                for (let i = 0; i < result.length; i++) {
+                    if (result[i] == 'C') {
+                        boxes[i].classList.add('box-green');
+                        document.getElementById(boxes[i].innerText.toLowerCase()).classList.add('key-green');
+                    } else if (result[i] == 'G') {
+                        boxes[i].classList.add('box-gold');
+                        key = document.getElementById(boxes[i].innerText.toLowerCase())
+                        if (!key.classList.contains('key-green')) {
+                            key.classList.add('key-gold');
+                        }
+                        correct = false
+                    } else {
+                        boxes[i].classList.add('box-grey');
+                        key = document.getElementById(boxes[i].innerText.toLowerCase())
+                        if (!key.classList.contains('key-green') && !key.classList.contains('key-gold')) {
+                            key.classList.add('key-grey');
+                        }
+                        correct = false;
+                    }
                 }
-                correct = false;
-            } else {
-                boxes[i].classList.add('box-grey');
-                key = document.getElementById(boxes[i].innerText.toLowerCase())
-                if (!key.classList.contains('key-green') && !key.classList.contains('key-gold')) {
-                    key.classList.add('key-grey');
+
+                current_row_idx += 1;
+
+                if (correct) {
+                    let attempts = current_row_idx;
+                    current_row_idx = 6;
+
+                    // Delay victory message until animation is complete
+                    setTimeout(function() {
+                        alert('You Won in ' + (attempts) + (attempts == 1 ? ' attempt!' : ' attempts!'));
+                    }, 500);
+                } else if (current_row_idx >= 6) {
+                    // Delay losing message until animation is complete
+                    setTimeout(function() {
+                        alert('The word was ' + word)
+                    }, 500);
+                } else {
+                    // Move to next row
+                    current_row = document.getElementById('row' + current_row_idx)
+                    console.log(current_row);
+
+                    current_box_idx = 0;
                 }
-                correct = false;
             }
-        }
-
-        current_row_idx += 1;
-
-        if (correct) {
-            let attempts = current_row_idx;
-            current_row_idx = 6;
-
-            // Delay victory message until animation is complete
-            setTimeout(function() {
-                alert('You Won in ' + (attempts) + (attempts == 1 ? ' attempt!' : ' attempts!'));
-            }, 500);
-        } else if (current_row_idx >= 6) {
-            // Delay losing message until animation is complete
-            setTimeout(function() {
-                alert('The word was ' + word)
-            }, 500);
-        } else {
-            // Move to next row
-            current_row = document.getElementById('row' + current_row_idx)
-            console.log(current_row);
-
-            current_box_idx = 0;
-        }
+        )
     }
 
     function process_del(char) {
