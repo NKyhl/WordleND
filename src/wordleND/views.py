@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Play
+from .models import User, Play, GameState
 from .forms import SignUpUserForm
 import random
 import json
@@ -55,17 +55,12 @@ def create_game(request):
     # get user and preferred language from request
     user = request.user
     language = request.POST.get('language')
+
+    print('language is ' + language)
+
     # open corresponding language file
-    if language == "en.txt":
-        language_path = f"../languages/{language}.txt"
-    elif language == "de.txt":
-        language_path = f"../languages/{language}.txt"
-    elif language == "es.txt":
-        language_path = f"../languages/{language}.txt"
-    elif language == "fr.txt":
-        language_path = f"../languages/{language}.txt"
-    elif lanugage == "pt.txt":
-        language_path = f"../languages/{language}.txt"
+    if language in {"en", "de", "es", "fr", "pt"}:
+        language_path = f"wordleND/languages/{language}.txt"
     else:
         return redirect('home')
         
@@ -74,9 +69,13 @@ def create_game(request):
         words = file.readlines()
 
         random_word = random.choice(words).strip()
+
+        print('word is ' + random_word)
     # create Play in database with user, word, language...
     p = Play(user=user, word=random_word, language=language)
     p.save()
+    g = GameState(play=p)
+    g.save()
 
     #redirect to /play
     return redirect('/play')
@@ -84,39 +83,83 @@ def create_game(request):
 def check_word(request):
     if request.method == "POST":
         # Get current game
-        # play = Play.objects.filter(
-        #     user=request.user,
-        #     in_progress=True,
-        # )
-        play = {
-            'word': 'MILES'
-        }
+        play = Play.objects.filter(
+            user=request.user,
+            in_progress=True,
+        )
 
         if not play:
             return {
                 'error': 'No Game in Progress'
             }
-        # else:
-            # play = play[0]
+        else:
+            play = play[0]
 
         result = []
-        word = json.loads(request.body.decode('utf-8'))['word']
-        print(type(word))
+        j = json.loads(request.body.decode('utf-8'))
+        word = j['word'].upper()
+        attempt = j['attempt']
+
+        # Validate word
+        language_path = f"wordleND/languages/{play.language}.txt"
+        with open(language_path, "r") as file:
+            words = map(str.upper, map(str.strip, file.readlines()))
+            if word.upper() not in words:
+                print(f'{word} not in words')
+                result = json.dumps({
+                    'valid': False
+                })
+                return HttpResponse(result, content_type='application/json')
 
         # Check word
+        correct = True
         for i, char in enumerate(word):
-            if char == play['word'][i]:    # Correct
+            if char == play.word[i]:    # Correct
                 result.append('C')
-            elif char in play['word']:     # Good
+            elif char in play.word:     # Good
                 result.append('G')
+                correct = False
             else:                       # Bad
                 result.append('B')
+                correct = False
 
         # Upload game state - TODO
+        g = GameState.objects.filter(play=play)[0]
+        if attempt == 1:
+            g.attempt1 = word
+        elif attempt == 2:
+            g.attempt2 = word
+        elif attempt == 3:
+            g.attempt3 = word
+        elif attempt == 4:
+            g.attempt4 = word
+        elif attempt == 5:
+            g.attempt5 = word
+        elif attempt == 6:
+            g.attempt6 = word   
+        g.save() 
 
+        # If the game is correct
+        if correct:
+            play.in_progress = False
+            play.attempts = attempt
+            play.outcome = True
+            play.save()
+        
+        # User lost
+        elif attempt == 6:
+            play.in_progress = False
+            play.attempts = attempt
+            play.outcome = False
+            play.save()
+            
         # Return result to frontend
         print(result)
-        result = json.dumps({'result': result})
+        result = json.dumps({
+            'valid': True,
+            'result': result,
+            'correct': correct
+        })
         return HttpResponse(result, content_type='application/json')
 
     return redirect('home')
