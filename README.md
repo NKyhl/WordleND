@@ -20,3 +20,5 @@ Wordle-like Django Project for Programming Paradigms - CSE 30332
   "password": "your-password",
   "access_token": "your-access_token"
 }
+
+- Game uses the US-keyboard and does not allow for special characters. If the random word has a special character, it's just a loss (after inputting 6 attempts). 
