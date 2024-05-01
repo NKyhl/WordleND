@@ -15,7 +15,7 @@
         </p>
         <div>
             {% if user.is_authenticated %}
-              {% if not in_progress %}
+              {% if not in_progress and not limit_reached %}
                 <form action="/create-game" method="POST">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-primary btn-lg px-4 gap-3">
@@ -54,10 +54,14 @@
                     </div>
                   </div>
                 </form>
-              {% else %}
+              {% elif in_progress %}
                 <button type="button" class="btn btn-primary btn-lg px-4 gap-3">
                     <a href="/play" class="nav-link">Resume</a>
                 </button>
+              {% elif limit_reached %}
+              <button type="button" class="btn btn-primary btn-lg px-4 gap-3">
+                <a href="/purchase" class="nav-link">Purchase More Plays</a>
+              </button>
               {% endif %}
             {% else %}
             <button type="button" class="btn btn-primary btn-lg px-4 gap-3">

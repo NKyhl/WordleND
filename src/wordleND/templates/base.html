@@ -24,11 +24,9 @@
                     <li class="nav-item">
                         <a href="/play" class="nav-link" aria-current="page">Play</a>
                     </li>
-                    {% if balance == 0 or plays_today >= 3 %}
-                        <li>
-                            <a href="/purchase" class="nav-link" aria-current="page"> Purchase Plays </a>
-                        </li>
-                    {% endif %}
+                    <li>
+                        <a href="/purchase" class="nav-link" aria-current="page"> Purchase Plays </a>
+                    </li>
                     <li class="nav-item">
                         <a href="/signout" class="nav-link" aria-current="page">Sign Out</a>
                     </li>

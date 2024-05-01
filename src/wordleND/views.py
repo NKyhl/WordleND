@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.utils import timezone
-from .models import User, Play, GameState
+from .models import User, Play, GameState, Profile
 from .forms import SignUpUserForm
 from .api import view_all_coins, view_balance_for_user, user_pay
 from .utils import load_config
@@ -39,16 +39,20 @@ def home(request):
         print('In Progress Games Today:', active_plays_today)
         print('Completed Games Today:', completed_plays_today)
 
-        if active_plays_today + completed_plays_today >= 3 and user_balance['amount'] == 0:
-            messages.success(request, ("Buy Coins"))
-        else:
-            messages.success(request, ("You have used all of your available games today. Want to use your coins?"))
+        profile = Profile.objects.get(user=user)
+        extra_plays = profile.extra_plays
+
+        if completed_plays_today >= 3 and not extra_plays:
+            if user_balance['amount'] == 0:
+                messages.success(request, ("You have used all of your available games today. Come back tomorrow!"))
+            else:
+                messages.success(request, ("You have used all of your available games today. Want to use your coins?"))
 
 
         return render(request, "index.html", {
             'balance': user_balance['amount'],
             'in_progress': True if active_plays_today else False,
-            'limit_reached': True if completed_plays_today >= 3 else False,
+            'limit_reached': True if completed_plays_today >= 3 and not extra_plays else False,
             'plays_today': active_plays_today + completed_plays_today
         })
     
@@ -111,6 +115,8 @@ def signup(request):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
+            profile = Profile(user=user)
+            profile.save()
             login(request, user)
             messages.success(request, ("Account Created!"))
             print(f'LOG - user {username} created!')
