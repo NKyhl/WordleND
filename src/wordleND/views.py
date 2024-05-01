@@ -238,15 +238,35 @@ def check_word(request):
 
         # Check word
         correct = True
+        result = ['B'] * 5
+        unflagged_guess = []
+        unflagged_word = []
+        # Greens
         for i, char in enumerate(guess):
             if char == play.word[i].upper():    # Correct
-                result.append('C')
-            elif char in play.word.upper():     # Good
-                result.append('G')
-                correct = False
-            else:                               # Bad
-                result.append('B')
-                correct = False
+                result[i] = 'C'
+            else:
+                unflagged_word.append(i)
+                unflagged_guess.append(i)
+        
+        correct = True if not unflagged_word else False
+        
+        # Yellow
+        print(unflagged_guess)
+        print(unflagged_word)
+        skip_guess = []
+        skip_word = []
+        for i in unflagged_guess:            # Go through remaining
+            if i in skip_guess:
+                continue
+            for j in unflagged_word:
+                print(f'checking {i=} with {j=}')
+                if j in skip_word:
+                    continue
+                if guess[i] == play.word[j]:
+                    result[i] = 'G'
+                    skip_guess.append(i)
+                    skip_word.append(j)
 
         # Upload game state - TODO
         g = GameState.objects.filter(play=play)[0]
@@ -307,6 +327,9 @@ def purchase(request):
         transaction_result = user_pay(access_token, request.user, amount)
         print(transaction_result)
         balance = view_balance_for_user(access_token, email)
+
+        profile = Profile.objects.get(user=request.user)
+        extra_plays = profile.extra_plays
         
         return render(request, 'purchase.html', {
             'transaction_result': transaction_result, 
