@@ -118,8 +118,11 @@ def signup(request):
             form.save()
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
+            name = form.cleaned_data['name']
             user = authenticate(username=username, password=password)
             profile = Profile(user=user)
+            if name:
+                profile.name = name
             profile.save()
             login(request, user)
             messages.success(request, ("Account Created!"))
