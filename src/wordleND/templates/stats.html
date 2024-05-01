@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to WorNDly!{% endblock %}
+
+{% block content %}
+<h1>Player Dashboard</h1>
+
+<!-- Add filtering options -->
+<form method="get">
+    <label for="time_period">Filter by time period:</label>
+    <select name="time_period" id="time_period">
+        <option value="all">All</option>
+        <option value="last_week">Last Week</option>
+        <option value="last_month">Last Month</option>
+        <option value="last_year">Last Year</option>
+    </select>
+    <button type="submit">Filter</button>
+</form>
+
+<!-- Display list of plays -->
+<ul>
+    {% for play in all_plays %}
+        <li>
+            Game Date: {{ play.game_date }} | 
+            Number of Attempts: {{ play.attempts }}
+        </li>
+    {% endfor %}
+</ul>
+<h2>Basic Statistics</h2>
+<p>Total Plays: {{ total_plays }}</p>
+<p>Total Wins: {{ total_wins }}</p>
+<p>Win Percentage: {{ win_percentage }}%</p>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<h2>Wordle Stats</h2>
+<canvas id="attemptsChart" width="400" height="200"></canvas>
+{{ attempts_distribution|json_script:"attempts-list" }}
+<script>
+    // Define variables to store the data passed from Django
+    let labels = ['1', '2', '3', '4', '5', '6']
+    let data = JSON.parse(document.getElementById('attempts-list').textContent);
+    console.log(data)
+    var ctx = document.getElementById('attemptsChart').getContext('2d');
+    var attemptsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Number of Attempts',
+                data: data,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}
