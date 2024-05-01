@@ -46,7 +46,7 @@ def home(request):
 
         if completed_plays_today >= 3 and not extra_plays:
             if user_balance['amount'] == 0:
-                messages.success(request, ("You have used all of your available games today. Come back tomorrow!"))
+                messages.success(request, ("You have used all of your available games today. Come back tomorrow for three more!"))
             else:
                 messages.success(request, ("You have used all of your available games today. Want to use your coins?"))
 
@@ -149,10 +149,41 @@ def signout(request):
 
 def create_game(request):
     # get user and preferred language from request
+    if not request.user.is_authenticated:
+        messages.warning(request, ('Sign in to start a new game'))
+        return redirect('home')
+
     user = request.user
     language = request.POST.get('language')
 
-    print('language is ' + language)
+    # Don't create a new game if they are in the middle of one
+    active_plays_today = Play.objects.filter(
+        user=user, 
+        in_progress = True,
+        game_date__date=datetime.now().today()
+    ).count()
+
+    if active_plays_today:
+        messages.success(request, ('Resuming game in progress...'))
+        return redirect('play')
+
+    # Check if an extra_game should be used or if they need to use coins
+    completed_plays_today = Play.objects.filter(
+        user=user, 
+        in_progress = False,
+        game_date__date=datetime.now().today()
+    ).count()
+
+    profile = Profile.objects.get(user=user)
+    extra_plays = profile.extra_plays
+
+    if completed_plays_today >= 3:
+        if not extra_plays:
+            return redirect('home')
+        else:
+            profile.extra_plays -= 1
+            profile.save()
+            messages.success(request, (f'You have used an extra play! You have {profile.extra_plays} remaining'))
 
     # open corresponding language file
     if language in {"en", "de", "es", "fr", "pt"}:
@@ -262,6 +293,10 @@ def check_word(request):
 def purchase(request):
     config = load_config('config.json')
     access_token = config['access_token']
+
+    profile = Profile.objects.get(user=request.user)
+    extra_plays = profile.extra_plays
+
     if request.method == 'POST':
         
         amount = request.POST.get('amount')
@@ -269,17 +304,24 @@ def purchase(request):
         balance = view_balance_for_user(access_token, email)
         
         
-        transaction_result = user_pay(access_token, email, amount)
+        transaction_result = user_pay(access_token, request.user, amount)
         print(transaction_result)
         balance = view_balance_for_user(access_token, email)
         
-        return render(request, 'purchase.html', {'transaction_result': transaction_result, 'balance':balance['amount']})
+        return render(request, 'purchase.html', {
+            'transaction_result': transaction_result, 
+            'balance': balance['amount'],
+            'extra_plays': extra_plays
+        })
     else:
         config = load_config('config.json')
         access_token = config['access_token']
         email = request.user.email 
         balance = view_balance_for_user(access_token, email)
-        return render(request, 'purchase.html', {'balance':balance['amount']})
+        return render(request, 'purchase.html', {
+            'balance':balance['amount'],
+            'extra_plays': extra_plays
+        })
 
 def player_dashboard(request):
     all_plays = Play.objects.filter(user=request.user, in_progress=False)
