@@ -12,5 +12,9 @@ Project contributors (sorted alphabetically)
 
 * **[Nolan](https://github.com/nkyhl)**
 
+  * Set up Django project and design database
   * Sign Up - creates a user account
-  * Website pages and display logic
+  * Phase 1 styling
+  * Play - Wordle-like styling, JS to make the game board and keyboard functional, game logic on backend
+  * Authentication / Security logic
+  * Dashboard styling
