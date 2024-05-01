@@ -8,6 +8,9 @@ class Profile(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True, default=None) # Optional
     extra_plays = models.IntegerField(default=0)
 
+    def __str__(self):
+        return f'{self.user.username}'
+
 
 class Play(models.Model):
     '''Represents one play of the game and its stats'''
