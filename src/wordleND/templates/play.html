@@ -23,7 +23,6 @@
 {% block content %}
 {% if user.is_authenticated %}
 <h1>Play WorNDly</h1>
-<p>Play page</p>
 <div class="d-flex justify-content-center align-items-center flex-column gap-2">
     <div id="row0" class="row gap-2">
         <div class="box"></div>
@@ -122,9 +121,55 @@
     </div>
 </div>
 {% endif %}
-
+{{attempts|json_script:"past-data-attempts"}}
+{{colors|json_script:"past-data-colors"}}
+{{word|json_script:"past-data-word"}}
 <script>
     let current_row_idx = 0;
+
+    function fill_in_row(word, coloring, row_idx) {
+        let current_row = document.getElementById('row' + row_idx)
+        let boxes = current_row.children
+        for (var i = 0; i < boxes.length; i++) {
+            boxes[i].innerText = word[i]
+
+            if (coloring[i] == 'C') {
+                boxes[i].classList.add('box-green');
+                document.getElementById(boxes[i].innerText.toLowerCase()).classList.add('key-green');
+            } else if (coloring[i] == 'G') {
+                boxes[i].classList.add('box-gold');
+                key = document.getElementById(boxes[i].innerText.toLowerCase())
+                if (!key.classList.contains('key-green')) {
+                    key.classList.add('key-gold');
+                }
+            } else {
+                boxes[i].classList.add('box-grey');
+                key = document.getElementById(boxes[i].innerText.toLowerCase())
+                if (!key.classList.contains('key-green') && !key.classList.contains('key-gold')) {
+                    key.classList.add('key-grey');
+                }
+            }
+        }
+    }
+
+    // Populate from existing data if needed
+    let attempts = JSON.parse(document.getElementById('past-data-attempts').textContent)
+    let colors = JSON.parse(document.getElementById('past-data-colors').textContent)
+    let word = JSON.parse(document.getElementById('past-data-word').textContent)
+    console.log('Correct word: ' + word)
+
+    if (attempts) {
+        console.log(attempts)
+        for (let i = 0; i < 6; i++) {
+            if (attempts[i] != '') {
+                fill_in_row(attempts[i], colors[i], i)
+            } else {
+                current_row_idx = i;
+                break;
+            }
+        }
+    }
+
     let current_row = document.getElementById('row' + current_row_idx)
     console.log(current_row);
 
@@ -173,7 +218,7 @@
         }
 
         let boxes = current_row.children
-        let word = get_guess(current_row);
+        let guess = get_guess(current_row);
         let correct = true;
 
         // Color the current row
@@ -184,7 +229,7 @@
                 "X-CSRFToken": '{{csrf_token}}'
             },
             body: JSON.stringify({
-                'word': word,
+                'guess': guess,
                 'attempt': current_row_idx + 1
             }),
         }).then(
@@ -198,6 +243,10 @@
 
                 result = j['result']
                 correct = j['correct']
+                word = j['word']
+
+                console.log('The correct word is ' + word)
+
                 for (let i = 0; i < result.length; i++) {
                     if (result[i] == 'C' || correct) {
                         boxes[i].classList.add('box-green');
