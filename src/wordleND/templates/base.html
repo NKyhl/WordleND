@@ -22,17 +22,11 @@
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a href="/play" class="nav-link" aria-current="page">Play</a>
-                    </li>
-                    <li>
-                        <a href="/purchase" class="nav-link" aria-current="page"> Purchase Plays </a>
-                    </li>
-                    <li class="nav-item">
                         <a href="/signout" class="nav-link" aria-current="page">Sign Out</a>
                     </li>
                     <li class="nav-item" style="display: flex; align-items: center;">
                         <img src="static/kratoscoin.png" alt="Kratos Coins" class="bi" width="35" height="35" style="margin-right: 5px;">
-                        <p style="margin: 0;">{{ balance }}₭</p>
+                        <a href="/purchase" style="margin: 0; text-decoration: none">{{ balance }}₭</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
