@@ -252,15 +252,12 @@ def check_word(request):
         correct = True if not unflagged_word else False
         
         # Yellow
-        print(unflagged_guess)
-        print(unflagged_word)
         skip_guess = []
         skip_word = []
         for i in unflagged_guess:            # Go through remaining
             if i in skip_guess:
                 continue
             for j in unflagged_word:
-                print(f'checking {i=} with {j=}')
                 if j in skip_word:
                     continue
                 if guess[i] == play.word[j]:

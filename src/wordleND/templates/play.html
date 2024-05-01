@@ -162,7 +162,7 @@
     console.log('Correct word: ' + word)
 
     if (attempts) {
-        console.log(attempts)
+        console.log('Attempts:' + attempts)
         for (let i = 0; i < 6; i++) {
             if (attempts[i] != '') {
                 fill_in_row(attempts[i], colors[i], i)
@@ -174,7 +174,6 @@
     }
 
     let current_row = document.getElementById('row' + current_row_idx)
-    console.log(current_row);
 
     let current_box_idx = 0;
 
@@ -187,7 +186,6 @@
     }
 
     function process_key(char) {
-        console.log(char);
 
         // Game complete
         if (current_row_idx >= 6) {
@@ -207,7 +205,6 @@
     }
 
     function process_enter(char) {
-        console.log("SPECIAL - Enter");
 
         // Game complete
         if (current_row_idx >= 6) {
@@ -287,7 +284,6 @@
                 } else {
                     // Move to next row
                     current_row = document.getElementById('row' + current_row_idx)
-                    console.log(current_row);
 
                     current_box_idx = 0;
                 }
@@ -296,7 +292,6 @@
     }
 
     function process_del(char) {
-        console.log("SPECIAL - Del " + current_box_idx);
 
         // Game Complete
         if (current_row_idx >= 6) {
