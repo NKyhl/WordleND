@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.utils import timezone
+from django.db.models import Count
 from .models import User, Play, GameState, Profile
 from .forms import SignUpUserForm
 from .api import view_all_coins, view_balance_for_user, user_pay
@@ -11,6 +12,7 @@ from .utils import load_config
 import random
 import json
 from datetime import datetime
+from operator import countOf
 
 # Create your views here.
 def home(request):
@@ -278,3 +280,39 @@ def purchase(request):
         email = request.user.email 
         balance = view_balance_for_user(access_token, email)
         return render(request, 'purchase.html', {'balance':balance['amount']})
+
+def player_dashboard(request):
+    all_plays = Play.objects.filter(user=request.user, in_progress=False)
+    
+    total_plays = all_plays.count()
+    total_wins = all_plays.filter(outcome=True).count()
+    win_percentage = (total_wins / total_plays) * 100 if total_plays > 0 else 0
+    attempt_history = [p.attempts for p in Play.objects.filter(user=request.user, in_progress=False, outcome=True)]
+    print(total_plays)
+    attempts_distribution = [
+        countOf(attempt_history, 1),
+        countOf(attempt_history, 2),
+        countOf(attempt_history, 3),
+        countOf(attempt_history, 4),
+        countOf(attempt_history, 5),
+        countOf(attempt_history, 6),
+    ]
+    print(attempts_distribution)
+
+    time_period = request.GET.get('time_period', 'all')
+    if time_period == 'last_week':
+        all_plays = Play.objects.filter(user=request.user, game_date__gte=timezone.now() - timezone.timedelta(days=7))
+    elif time_period == 'last_month':
+        all_plays = Play.objects.filter(user=request.user, game_date__gte=timezone.now() - timezone.timedelta(days=30))
+    elif time_period == 'last_year':
+        all_plays = Play.objects.filter(user=request.user, game_date__gte=timezone.now() - timezone.timedelta(days=365))
+
+    context = {
+        'all_plays': all_plays,
+        'time_period':time_period,
+        'total_plays': total_plays,
+        'total_wins': total_wins,
+        'win_percentage': win_percentage,
+        'attempts_distribution': attempts_distribution
+    }
+    return render(request, "stats.html", context)
