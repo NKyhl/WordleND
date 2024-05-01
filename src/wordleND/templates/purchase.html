@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to WorNDly!{% endblock %}
+
+{% block nav-pills %}
+    <li class="nav-item">
+        <a href="/" class="nav-link" aria-current="page">Home</a>
+    </li>
+    <li class="nav-item">
+        <a href="/play" class="nav-link" aria-current="page">Play</a>
+    </li>
+    <li class="nav-item">
+        <a href="/signout" class="nav-link" aria-current="page">Sign Out</a>
+    </li>
+    <li class="nav-item" style="display: flex; align-items: center;">
+        <img src="static/kratoscoin.png" alt="Kratos Coins" class="bi me-2" width="30" height="35" style="margin-right: 5px;">
+        <p style="margin: 0;">{{ balance }}</p>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="content" id="content">
+            <h2>Current Balance: {{ balance }}</h2>
+            
+            <form method="post">
+                {% csrf_token %}
+                <label for="amount">Number of Games to Purchase:</label>
+                <input type="number" id="amount" name="amount" min="1" required>
+                <button type="submit">Purchase</button>
+            </form>
+           
+            {% if transaction_result %}
+                <div class="alert {% if transaction_result.success %}alert-success{% else %}alert-danger{% endif %}" role="alert">
+                    {{ transaction_result.message }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

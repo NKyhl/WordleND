@@ -34,6 +34,7 @@ def user_pay(access_token, email, amount):
     response = requests.post(f"https://jcssantos.pythonanywhere.com/api/group15/group15/player/{email}/pay", headers=headers, data=data)
 
     if response.status_code == 200:
-        return response.json()
+        return {'message':f'Successfully purchased {amount} games!'}
     else:
         print("Failed to access the API endpoint to pay:", response.status_code)
+        return {'message':f'Insufficient Funds!'}

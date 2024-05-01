@@ -16,7 +16,6 @@ from datetime import datetime
 def home(request):
     config = load_config('config.json')
     access_token = config['access_token']
-    user = request.user
     current_date = timezone.now().date()
    
     if request.user.is_authenticated:
@@ -39,10 +38,17 @@ def home(request):
         print('In Progress Games Today:', active_plays_today)
         print('Completed Games Today:', completed_plays_today)
 
+        if plays_today >= 3 and user_balance['amount'] == 0:
+            messages.success(request, ("Buy Coins"))
+        else:
+            messages.success(request, ("You have used all of your availble games today. Want to use your coins?"))
+
+
         return render(request, "index.html", {
             'balance': user_balance['amount'],
             'in_progress': True if active_plays_today else False,
-            'limit_reached': True if completed_plays_today >= 3 else False
+            'limit_reached': True if completed_plays_today >= 3 else False,
+            'plays_today': active_plays_today + completed_plays_today
         })
     
     return render(request, "index.html", {'balance':0})
@@ -243,3 +249,25 @@ def check_word(request):
         return HttpResponse(result, content_type='application/json')
 
     return redirect('home')
+
+def purchase(request):
+    config = load_config('config.json')
+    access_token = config['access_token']
+    if request.method == 'POST':
+        
+        amount = request.POST.get('amount')
+        email = request.user.email 
+        balance = view_balance_for_user(access_token, email)
+        
+        
+        transaction_result = user_pay(access_token, email, amount)
+        print(transaction_result)
+        balance = view_balance_for_user(access_token, email)
+        
+        return render(request, 'purchase.html', {'transaction_result': transaction_result, 'balance':balance['amount']})
+    else:
+        config = load_config('config.json')
+        access_token = config['access_token']
+        email = request.user.email 
+        balance = view_balance_for_user(access_token, email)
+        return render(request, 'purchase.html', {'balance':balance['amount']})
