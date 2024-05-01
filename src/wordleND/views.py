@@ -344,8 +344,8 @@ def purchase(request):
         access_token = config['access_token']
         email = request.user.email 
         balance = view_balance_for_user(access_token, email)
-        if not user_balance:
-            user_balance = {'amount': 0}
+        if not balance:
+            balance = {'amount': 0}
         return render(request, 'purchase.html', {
             'balance':balance['amount'],
             'extra_plays': extra_plays
