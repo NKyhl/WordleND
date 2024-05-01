@@ -25,6 +25,8 @@ def home(request):
         user_email = request.user.email
 
         user_balance = view_balance_for_user(access_token, user_email)
+        if not user_balance:
+            user_balance = {'amount': 0}
 
         active_plays_today = Play.objects.filter(
             user=user, 
