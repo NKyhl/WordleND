@@ -2,6 +2,31 @@
 
 {% block title %}Welcome to WorNDly!{% endblock %}
 
+{% block nav-pills %}
+<li class="nav-item">
+    <a href="/" class="nav-link" aria-current="page">Home</a>
+</li>
+{% if user.is_authenticated %}
+    <li>
+        <a href="/stats" class="nav-link active" aria-current="page"> Player Stats </a>
+    </li>
+    <li class="nav-item">
+        <a href="/signout" class="nav-link" aria-current="page">Sign Out</a>
+    </li>
+    <li class="nav-item" style="display: flex; align-items: center;">
+        <img src="static/kratoscoin.png" alt="Kratos Coins" class="bi" width="35" height="35" style="margin-right: 5px;">
+        <a href="/purchase" style="margin: 0; text-decoration: none">{{ balance }}₭</a>
+    </li>
+{% else %}
+    <li class="nav-item">
+        <a href="/signup" class="nav-link" aria-current="page">Sign Up</a>
+    </li>
+    <li class="nav-item">
+        <a href="/signin" class="nav-link" aria-current="page">Sign In</a>
+    </li>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 <h1>Player Dashboard</h1>
 
@@ -26,16 +51,23 @@
         </li>
     {% endfor %}
 </ul>
-<h2>Basic Statistics</h2>
-<p>Total Plays: {{ total_plays }}</p>
-<p>Total Wins: {{ total_wins }}</p>
-<p>Win Percentage: {{ win_percentage }}%</p>
+<h2>Statistics</h2>
+<div class="d-flex justify-content-around">
+    <div class="text-center">
+        <p style="font-size: 40px; margin-bottom: 0px">{{ total_plays }}</p>
+        <p>Played</p>
+    </div>
+    <div class="text-center">
+        <p style="font-size: 40px; margin-bottom: 0px">{{ win_percentage }}</p>
+        <p>Win %</p>
+    </div>
+</div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
-<h2>Wordle Stats</h2>
+<h2>Guess Distribution</h2>
 <canvas id="attemptsChart" width="400" height="200"></canvas>
 {{ attempts_distribution|json_script:"attempts-list" }}
 <script>
@@ -49,19 +81,28 @@
         data: {
             labels: labels,
             datasets: [{
-                label: 'Number of Attempts',
+                label: 'Games',
                 data: data,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: '#787C7E',
+                borderColor: '#787C7E',
                 borderWidth: 1
             }]
         },
         options: {
+            indexAxis: 'y',
             scales: {
-                y: {
+                x: {
                     beginAtZero: true
-                }
-            }
+                },
+                xAxes: [{
+                    ticks: {
+                        precision: 0
+                    }
+                }]
+            },
+            legend: {
+                display: false
+            },
         }
     });
 </script>

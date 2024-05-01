@@ -324,6 +324,10 @@ def purchase(request):
         })
 
 def player_dashboard(request):
+    if not request.user.is_authenticated:
+        messages.warning(request, ('Sign in to view stats'))
+        return redirect('home')
+
     all_plays = Play.objects.filter(user=request.user, in_progress=False)
     
     total_plays = all_plays.count()
@@ -349,12 +353,16 @@ def player_dashboard(request):
     elif time_period == 'last_year':
         all_plays = Play.objects.filter(user=request.user, game_date__gte=timezone.now() - timezone.timedelta(days=365))
 
+    config = load_config('config.json')
+    access_token = config['access_token']
+
     context = {
         'all_plays': all_plays,
         'time_period':time_period,
         'total_plays': total_plays,
         'total_wins': total_wins,
         'win_percentage': win_percentage,
-        'attempts_distribution': attempts_distribution
+        'attempts_distribution': attempts_distribution,
+        'balance': view_balance_for_user(access_token, request.user.email)['amount']
     }
     return render(request, "stats.html", context)
