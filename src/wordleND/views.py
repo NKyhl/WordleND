@@ -3,14 +3,36 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
+from django.utils import timezone
 from .models import User, Play
 from .forms import SignUpUserForm
+from .api import view_all_coins, view_balance_for_user, user_pay
+from .utils import load_config
 import random
 import json
+from datetime import datetime
 
 # Create your views here.
 def home(request):
-    return render(request, "index.html", {})
+    config = load_config('config.json')
+    access_token = config['access_token']
+    user = request.user
+    current_date = timezone.now().date()
+   
+    if request.user.is_authenticated:
+        user_email = request.user.email
+
+    user_balance = view_balance_for_user(access_token, user_email)
+
+    plays_today = Play.objects.filter(
+        user=user, 
+        in_progress = False,
+        game_date__date=current_date
+    )
+    
+    print(plays_today)
+    
+    return render(request, "index.html", {'balance':user_balance['amount']})
 
 def play(request):
     return render(request, "play.html", {})
