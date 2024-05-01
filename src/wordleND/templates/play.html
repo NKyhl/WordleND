@@ -183,15 +183,23 @@
                 "Content-Type": "application/json",
                 "X-CSRFToken": '{{csrf_token}}'
             },
-            body: JSON.stringify({'word': word}),
+            body: JSON.stringify({
+                'word': word,
+                'attempt': current_row_idx + 1
+            }),
         }).then(
             res => res.json()
         ).then(
-            j => j['result']
-        ).then(
-            result => {
+            j => {
+                if (!j['valid']) {
+                    alert('Invalid word')
+                    return;
+                }
+
+                result = j['result']
+                correct = j['correct']
                 for (let i = 0; i < result.length; i++) {
-                    if (result[i] == 'C') {
+                    if (result[i] == 'C' || correct) {
                         boxes[i].classList.add('box-green');
                         document.getElementById(boxes[i].innerText.toLowerCase()).classList.add('key-green');
                     } else if (result[i] == 'G') {
@@ -200,14 +208,12 @@
                         if (!key.classList.contains('key-green')) {
                             key.classList.add('key-gold');
                         }
-                        correct = false
                     } else {
                         boxes[i].classList.add('box-grey');
                         key = document.getElementById(boxes[i].innerText.toLowerCase())
                         if (!key.classList.contains('key-green') && !key.classList.contains('key-gold')) {
                             key.classList.add('key-grey');
                         }
-                        correct = false;
                     }
                 }
 
