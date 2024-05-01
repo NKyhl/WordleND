@@ -6,6 +6,7 @@ class Profile(models.Model):
     '''Represents a user's non-auth-related data'''
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=True, null=True, default=None) # Optional
+    extra_plays = models.IntegerField(default=0)
 
 
 class Play(models.Model):

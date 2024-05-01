@@ -17,6 +17,7 @@ def home(request):
     config = load_config('config.json')
     access_token = config['access_token']
     current_date = timezone.now().date()
+    user = request.user
    
     if request.user.is_authenticated:
         user_email = request.user.email
@@ -38,10 +39,10 @@ def home(request):
         print('In Progress Games Today:', active_plays_today)
         print('Completed Games Today:', completed_plays_today)
 
-        if plays_today >= 3 and user_balance['amount'] == 0:
+        if active_plays_today + completed_plays_today >= 3 and user_balance['amount'] == 0:
             messages.success(request, ("Buy Coins"))
         else:
-            messages.success(request, ("You have used all of your availble games today. Want to use your coins?"))
+            messages.success(request, ("You have used all of your available games today. Want to use your coins?"))
 
 
         return render(request, "index.html", {
