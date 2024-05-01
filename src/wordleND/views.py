@@ -321,11 +321,15 @@ def purchase(request):
         amount = request.POST.get('amount')
         email = request.user.email 
         balance = view_balance_for_user(access_token, email)
+        if not user_balance:
+            user_balance = {'amount': 0}
         
         
         transaction_result = user_pay(access_token, request.user, amount)
         print(transaction_result)
         balance = view_balance_for_user(access_token, email)
+        if not user_balance:
+            user_balance = {'amount': 0}
 
         profile = Profile.objects.get(user=request.user)
         extra_plays = profile.extra_plays
@@ -340,6 +344,8 @@ def purchase(request):
         access_token = config['access_token']
         email = request.user.email 
         balance = view_balance_for_user(access_token, email)
+        if not user_balance:
+            user_balance = {'amount': 0}
         return render(request, 'purchase.html', {
             'balance':balance['amount'],
             'extra_plays': extra_plays
