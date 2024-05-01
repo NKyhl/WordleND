@@ -384,6 +384,10 @@ def player_dashboard(request):
     config = load_config('config.json')
     access_token = config['access_token']
 
+    balance = view_balance_for_user(access_token, request.user.email)
+    if not balance:
+        balance = {'amount': 0}
+
     context = {
         'all_plays': all_plays,
         'time_period':time_period,
@@ -391,6 +395,6 @@ def player_dashboard(request):
         'total_wins': total_wins,
         'win_percentage': win_percentage,
         'attempts_distribution': attempts_distribution,
-        'balance': view_balance_for_user(access_token, request.user.email)['amount']
+        'balance': balance['amount']
     }
     return render(request, "stats.html", context)
