@@ -11,6 +11,7 @@ Wordle-like Django Project for Programming Paradigms - CSE 30332
 - German
 - French
 - Portuguese
+
 ** Setup
 - Place a file called config.json on the root folder of this Django project. This json file should have the following format:
 
