@@ -288,7 +288,7 @@ def player_dashboard(request):
     total_wins = all_plays.filter(outcome=True).count()
     win_percentage = (total_wins / total_plays) * 100 if total_plays > 0 else 0
     attempt_history = [p.attempts for p in Play.objects.filter(user=request.user, in_progress=False, outcome=True)]
-    print(total_plays)
+   
     attempts_distribution = [
         countOf(attempt_history, 1),
         countOf(attempt_history, 2),
@@ -297,7 +297,7 @@ def player_dashboard(request):
         countOf(attempt_history, 5),
         countOf(attempt_history, 6),
     ]
-    print(attempts_distribution)
+    
 
     time_period = request.GET.get('time_period', 'all')
     if time_period == 'last_week':

@@ -5,23 +5,27 @@
 {% block content %}
 <h1>Player Dashboard</h1>
 
-<!-- Add filtering options -->
 <form method="get">
     <label for="time_period">Filter by time period:</label>
     <select name="time_period" id="time_period">
-        <option value="all">All</option>
-        <option value="last_week">Last Week</option>
-        <option value="last_month">Last Month</option>
-        <option value="last_year">Last Year</option>
+        <option value="All">All</option>
+        <option value="Last Week">Last Week</option>
+        <option value="Last Month">Last Month</option>
+        <option value="Last Year">Last Year</option>
     </select>
     <button type="submit">Filter</button>
 </form>
 
-<!-- Display list of plays -->
 <ul>
     {% for play in all_plays %}
         <li>
             Game Date: {{ play.game_date }} | 
+            {% if play.outcome %}
+            Pass/Fail: Pass |
+            {% else %}
+            Pass/Fail: Fail |
+            {% endif %}
+            Word: {{ play.word }} |
             Number of Attempts: {{ play.attempts }}
         </li>
     {% endfor %}
@@ -39,10 +43,22 @@
 <canvas id="attemptsChart" width="400" height="200"></canvas>
 {{ attempts_distribution|json_script:"attempts-list" }}
 <script>
-    // Define variables to store the data passed from Django
+    let time_period = "{{time_period}}";
+    if (time_period == 'last_week') {
+        document.getElementById('name').value = "Last Week"
+    }
+    else if (time_period == 'last_month') {
+        document.getElementById('name').value = "Last Month"
+    }
+    else if (time_period == 'last_year') {
+        document.getElementById('name').value = "Last Year"
+    } 
+    else {
+        document.getElementById('name').value = "All"
+    }
+    
     let labels = ['1', '2', '3', '4', '5', '6']
     let data = JSON.parse(document.getElementById('attempts-list').textContent);
-    console.log(data)
     var ctx = document.getElementById('attemptsChart').getContext('2d');
     var attemptsChart = new Chart(ctx, {
         type: 'bar',

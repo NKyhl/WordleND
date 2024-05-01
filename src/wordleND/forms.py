@@ -7,12 +7,14 @@ class SignUpUserForm(UserCreationForm):
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
-    # name = forms.CharField(max_length=100, required=False)
+    name = forms.CharField(
+        max_length=100, required=False, widget=forms.TextInput(attrs={'class':'form-control'})
+    )
 
     class Meta:
         '''Define form fields'''
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('name', 'username', 'email', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         '''Hack for styling built-in form fields with bootstrap'''
