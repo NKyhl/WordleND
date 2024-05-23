@@ -218,6 +218,7 @@ def check_word(request):
         play = Play.objects.filter(
             user=request.user,
             in_progress=True,
+            game_date__date=datetime.now().today()
         )
 
         if not play:
