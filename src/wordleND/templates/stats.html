@@ -28,8 +28,8 @@
 {% endblock %}
 
 {% block content %}
-<h1>Player Dashboard</h1>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<h2>History</h2>
 <!-- Add filtering options -->
 <form method="get">
     <label for="time_period">Filter by time period:</label>
@@ -43,15 +43,17 @@
 </form>
 
 <!-- Display list of plays -->
-<ul>
+<ul class="list-group">
     {% for play in all_plays %}
-        <li>
-            Game Date: {{ play.game_date }} | 
-            Number of Attempts: {{ play.attempts }}
+        <li class="list-group-item">
+            {{ play.word }} -
+            {{ play.outcome|yesno:"Win,Loss" }} -
+            {{ play.attempts }} attempt{{play.attempts|pluralize}} -
+            {{ play.game_date }}
         </li>
     {% endfor %}
 </ul>
-<h2>Statistics</h2>
+<h2 class="mt-4">Statistics</h2>
 <div class="d-flex justify-content-around">
     <div class="text-center">
         <p style="font-size: 40px; margin-bottom: 0px">{{ total_plays }}</p>
@@ -62,13 +64,8 @@
         <p>Win %</p>
     </div>
 </div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-<h2>Guess Distribution</h2>
-<canvas id="attemptsChart" width="400" height="200"></canvas>
+<h2 class="mt-4">Guess Distribution</h2>
+<canvas id="attemptsChart" width="400" height="200" class="mb-4"></canvas>
 {{ attempts_distribution|json_script:"attempts-list" }}
 <script>
     // Define variables to store the data passed from Django
@@ -85,7 +82,7 @@
                 data: data,
                 backgroundColor: '#787C7E',
                 borderColor: '#787C7E',
-                borderWidth: 1
+                borderWidth: 1,
             }]
         },
         options: {
