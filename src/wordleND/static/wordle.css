@@ -9,7 +9,7 @@
   
   background-color: #FFF;
   color: black;
-  border: 2px solid #D3D6DA;
+  border: 3px solid #D3D6DA;
 }
 
 .box-grey {
@@ -27,7 +27,7 @@
 .box-active {
   background-color: #FFF;
   color: black;
-  border: 2px solid #878A8C;
+  border: 3px solid #878A8C;
 }
 
 .key {
@@ -40,7 +40,7 @@
   font-weight: bold;
   
   background-color: #D4D6DA;
-  border: 2px solid #D4D6DA;
+  border: 3px solid #D4D6DA;
   border-radius: 6px;
 
   cursor: pointer;
@@ -48,19 +48,19 @@
 
 .key-grey {
   background-color: #787C7E;
-  border: 2px solid #787C7E;
+  border: 3px solid #787C7E;
   color: white;
 }
 
 .key-green {
   background-color: #6BAA64;
-  border: 2px solid #6BAA64;
+  border: 3px solid #6BAA64;
   color: white;
 }
 
 .key-gold {
   background-color: #CAB458;
-  border: 2px solid #CAB458;
+  border: 3px solid #CAB458;
   color: white;
 }
 
@@ -78,14 +78,14 @@
     transform: scaleY(0);
     background-color: #FFF;
     color: black;
-    border: 2px solid #878A8C;
+    border: 3px solid #878A8C;
   }
 
   100% {
     transform: scaleY(1);
     background-color: #787C7E;
     color: white;
-    border: 2px solid #787C7E;
+    border: 3px solid #787C7E;
   }
 }
 
@@ -98,14 +98,14 @@
     transform: scaleY(0);
     background-color: #FFF;
     color: black;
-    border: 2px solid #878A8C;
+    border: 3px solid #878A8C;
   }
 
   100% {
     transform: scaleY(1);
     background-color: #6BAA64;
     color: white;
-    border: 2px solid #6BAA64;
+    border: 3px solid #6BAA64;
   }
 }
 
@@ -118,13 +118,13 @@
     transform: scaleY(0);
     background-color: #FFF;
     color: black;
-    border: 2px solid #878A8C;
+    border: 3px solid #878A8C;
   }
 
   100% {
     transform: scaleY(1);
     background-color: #CAB458;
     color: white;
-    border: 2px solid #CAB458;
+    border: 3px solid #CAB458;
   }
 }

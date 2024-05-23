@@ -108,7 +108,10 @@ def play(request):
     return render(request, "play.html", {
         'attempts': [g.attempt1, g.attempt2, g.attempt3, g.attempt4, g.attempt5, g.attempt6],
         'colors': colors,
-        'word': play.word
+        'word': play.word,
+        'language': play.language,
+        'games_today': Play.objects.filter(user=request.user,
+            game_date__date=datetime.now().today()).count()
     })
 
 def signup(request):
