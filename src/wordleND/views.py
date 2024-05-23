@@ -94,16 +94,8 @@ def play(request):
     attempts = [g.attempt1, g.attempt2, g.attempt3, g.attempt4, g.attempt5, g.attempt6]
     colors = []
     for attempt in attempts:
-        result = []
-        for i, char in enumerate(attempt):
-            if char == play.word[i].upper():    # Correct
-                result.append('C')
-            elif char in play.word.upper():     # Good
-                result.append('G')
-            else:                               # Bad
-                result.append('B')
+        result, correct = _check_word(attempt, play.word)
         colors.append(result)
-
 
     return render(request, "play.html", {
         'attempts': [g.attempt1, g.attempt2, g.attempt3, g.attempt4, g.attempt5, g.attempt6],
@@ -203,6 +195,7 @@ def create_game(request):
         random_word = random.choice(words).strip()
 
         print('word is ' + random_word)
+
     # create Play in database with user, word, language...
     p = Play(user=user, word=random_word, language=language)
     p.save()
@@ -211,6 +204,39 @@ def create_game(request):
 
     #redirect to /play
     return redirect('/play')
+
+def _check_word(guess: str, word: str):
+    '''Check a guess against the correct word'''
+    correct = True
+    result = ['B'] * 5
+    unflagged_guess = []
+    unflagged_word = []
+
+    # Greens
+    for i, char in enumerate(guess):
+        if char == word[i].upper():     # Correct
+            result[i] = 'C'
+        else:
+            unflagged_word.append(i)
+            unflagged_guess.append(i)
+    
+    correct = True if not unflagged_word else False
+    
+    # Yellow
+    skip_guess = []
+    skip_word = []
+    for i in unflagged_guess:           # Go through remaining letters
+        if i in skip_guess:
+            continue
+        for j in unflagged_word:
+            if j in skip_word:
+                continue
+            if guess[i] == word[j].upper():
+                result[i] = 'G'
+                skip_guess.append(i)
+                skip_word.append(j)
+
+    return result, correct
 
 def check_word(request):
     if request.method == "POST":
@@ -243,33 +269,7 @@ def check_word(request):
                 return HttpResponse(result, content_type='application/json')
 
         # Check word
-        correct = True
-        result = ['B'] * 5
-        unflagged_guess = []
-        unflagged_word = []
-        # Greens
-        for i, char in enumerate(guess):
-            if char == play.word[i].upper():    # Correct
-                result[i] = 'C'
-            else:
-                unflagged_word.append(i)
-                unflagged_guess.append(i)
-        
-        correct = True if not unflagged_word else False
-        
-        # Yellow
-        skip_guess = []
-        skip_word = []
-        for i in unflagged_guess:            # Go through remaining
-            if i in skip_guess:
-                continue
-            for j in unflagged_word:
-                if j in skip_word:
-                    continue
-                if guess[i] == play.word[j].upper():
-                    result[i] = 'G'
-                    skip_guess.append(i)
-                    skip_word.append(j)
+        result, correct = _check_word(guess, play.word)
 
         # Upload game state - TODO
         g = GameState.objects.filter(play=play)[0]
@@ -331,7 +331,6 @@ def purchase(request):
         balance = view_balance_for_user(access_token, email)
         if not balance:
             balance = {'amount': 0}
-        
         
         transaction_result = user_pay(access_token, request.user, amount)
         print(transaction_result)
