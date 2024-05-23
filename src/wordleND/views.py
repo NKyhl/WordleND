@@ -314,6 +314,10 @@ def check_word(request):
     return redirect('home')
 
 def purchase(request):
+    if not request.user.is_authenticated:
+        messages.warning(request, ('Sign in to purchase'))
+        return redirect('home')
+
     config = load_config('config.json')
     access_token = config['access_token']
 
