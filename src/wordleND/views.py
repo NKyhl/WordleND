@@ -104,6 +104,11 @@ def play(request):
                 result.append('B')
         colors.append(result)
 
+    config = load_config('config.json')
+    access_token = config['access_token']
+    balance = view_balance_for_user(access_token, request.user.email)
+    if not balance:
+        balance = {'amount': 0}
 
     return render(request, "play.html", {
         'attempts': [g.attempt1, g.attempt2, g.attempt3, g.attempt4, g.attempt5, g.attempt6],
@@ -111,7 +116,8 @@ def play(request):
         'word': play.word,
         'language': play.language,
         'games_today': Play.objects.filter(user=request.user,
-            game_date__date=datetime.now().today()).count()
+            game_date__date=datetime.now().today()).count(),
+        'balance': balance['amount']
     })
 
 def signup(request):
