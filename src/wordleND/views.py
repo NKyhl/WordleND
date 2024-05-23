@@ -266,7 +266,7 @@ def check_word(request):
             for j in unflagged_word:
                 if j in skip_word:
                     continue
-                if guess[i] == play.word[j]:
+                if guess[i] == play.word[j].upper():
                     result[i] = 'G'
                     skip_guess.append(i)
                     skip_word.append(j)
