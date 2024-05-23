@@ -46,11 +46,11 @@ def home(request):
         profile = Profile.objects.get(user=user)
         extra_plays = profile.extra_plays
 
-        if completed_plays_today >= 3 and not extra_plays:
-            if user_balance['amount'] == 0:
-                messages.success(request, ("You have used all of your available games today. Come back tomorrow for three more!"))
+        if completed_plays_today >= 3:
+            if extra_plays:
+                messages.success(request, (f"You have used your 3 free plays today, but you can use one of your {extra_plays} extra plays!"))
             else:
-                messages.success(request, ("You have used all of your available games today. Want to use your coins?"))
+                messages.success(request, ("You have used your 3 free plays today. Click your balance to purchase more."))
 
 
         return render(request, "index.html", {
@@ -60,7 +60,9 @@ def home(request):
             'plays_today': active_plays_today + completed_plays_today
         })
     
-    return render(request, "index.html", {'balance':0})
+    return render(request, "index.html", {
+        'balance':0,
+    })
 
 def play(request):
     if not request.user.is_authenticated:
