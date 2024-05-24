@@ -21,12 +21,6 @@ class Play(models.Model):
     in_progress = models.BooleanField(default=True)
     language = models.CharField(max_length=2, default='en') # de, es, fr, pt, en
     word = models.CharField(max_length=5, default='MILES')
-
-    def __str__(self):
-        return f'{self.game_date.date()} - {self.user} - {self.language} -  {self.word}' + (' - In Progress' if self.in_progress else (' - Won' if self.outcome else ' - Lost'))
-    
-class GameState(models.Model):
-    play = models.ForeignKey(Play, on_delete=models.CASCADE)
     attempt1 = models.CharField(max_length=5, blank=True, null=True, default='')
     attempt2 = models.CharField(max_length=5, blank=True, null=True, default='')
     attempt3 = models.CharField(max_length=5, blank=True, null=True, default='')
@@ -35,4 +29,4 @@ class GameState(models.Model):
     attempt6 = models.CharField(max_length=5, blank=True, null=True, default='')
 
     def __str__(self):
-        return f'{self.play.game_date.date()} - {self.play.user} - {self.play.word}'
+        return f'{self.game_date.date()} - {self.user} - {self.language} -  {self.word}' + (' - In Progress' if self.in_progress else (' - Won' if self.outcome else ' - Lost'))
