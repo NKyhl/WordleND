@@ -46,11 +46,11 @@ def home(request):
         profile = Profile.objects.get(user=user)
         extra_plays = profile.extra_plays
 
-        if completed_plays_today >= 3 and not extra_plays:
-            if user_balance['amount'] == 0:
-                messages.success(request, ("You have used all of your available games today. Come back tomorrow for three more!"))
+        if completed_plays_today >= 3:
+            if extra_plays:
+                messages.success(request, (f"You have used your 3 free plays today, but you can use one of your {extra_plays} extra plays!"))
             else:
-                messages.success(request, ("You have used all of your available games today. Want to use your coins?"))
+                messages.success(request, ("You have used your 3 free plays today. Click your balance to purchase more."))
 
 
         return render(request, "index.html", {
@@ -60,7 +60,9 @@ def home(request):
             'plays_today': active_plays_today + completed_plays_today
         })
     
-    return render(request, "index.html", {'balance':0})
+    return render(request, "index.html", {
+        'balance':0,
+    })
 
 def play(request):
     if not request.user.is_authenticated:
@@ -97,10 +99,20 @@ def play(request):
         result, correct = _check_word(attempt, play.word)
         colors.append(result)
 
+    config = load_config('config.json')
+    access_token = config['access_token']
+    balance = view_balance_for_user(access_token, request.user.email)
+    if not balance:
+        balance = {'amount': 0}
+
     return render(request, "play.html", {
         'attempts': [g.attempt1, g.attempt2, g.attempt3, g.attempt4, g.attempt5, g.attempt6],
         'colors': colors,
-        'word': play.word
+        'word': play.word,
+        'language': play.language,
+        'games_today': Play.objects.filter(user=request.user,
+            game_date__date=datetime.now().today()).count(),
+        'balance': balance['amount']
     })
 
 def signup(request):
