@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.utils import timezone
 from django.db.models import Count
-from .models import User, Play, GameState, Profile
+from .models import User, Play, Profile
 from .forms import SignUpUserForm
 from .api import view_all_coins, view_balance_for_user, user_pay
 from .utils import load_config
@@ -80,20 +80,8 @@ def play(request):
     else:
         play = play[0]
 
-    # Get game state
-    print(play)
-    g = GameState.objects.filter(
-        play=play
-    )
-    print(g)
-
-    if not g:
-        return redirect('home')
-    else:
-        g = g[0]
-
-    # Get colors too
-    attempts = [g.attempt1, g.attempt2, g.attempt3, g.attempt4, g.attempt5, g.attempt6]
+    # Get game state, colors
+    attempts = [play.attempt1, play.attempt2, play.attempt3, play.attempt4, play.attempt5, play.attempt6]
     colors = []
     for attempt in attempts:
         result, correct = _check_word(attempt, play.word)
@@ -106,7 +94,7 @@ def play(request):
         balance = {'amount': 0}
 
     return render(request, "play.html", {
-        'attempts': [g.attempt1, g.attempt2, g.attempt3, g.attempt4, g.attempt5, g.attempt6],
+        'attempts': [play.attempt1, play.attempt2, play.attempt3, play.attempt4, play.attempt5, play.attempt6],
         'colors': colors,
         'word': play.word,
         'language': play.language,
@@ -211,8 +199,6 @@ def create_game(request):
     # create Play in database with user, word, language...
     p = Play(user=user, word=random_word, language=language)
     p.save()
-    g = GameState(play=p)
-    g.save()
 
     #redirect to /play
     return redirect('/play')
@@ -283,21 +269,20 @@ def check_word(request):
         # Check word
         result, correct = _check_word(guess, play.word)
 
-        # Upload game state - TODO
-        g = GameState.objects.filter(play=play)[0]
+        # Upload game state
         if attempt == 1:
-            g.attempt1 = guess
+            play.attempt1 = guess
         elif attempt == 2:
-            g.attempt2 = guess
+            play.attempt2 = guess
         elif attempt == 3:
-            g.attempt3 = guess
+            play.attempt3 = guess
         elif attempt == 4:
-            g.attempt4 = guess
+            play.attempt4 = guess
         elif attempt == 5:
-            g.attempt5 = guess
+            play.attempt5 = guess
         elif attempt == 6:
-            g.attempt6 = guess   
-        g.save() 
+            play.attempt6 = guess   
+        play.save() 
 
         # If the game is correct
         if correct:
