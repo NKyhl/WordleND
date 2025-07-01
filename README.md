@@ -1,29 +1,61 @@
 # WordleND
-Wordle-like Django Project for Programming Paradigms - CSE 30332
 
-### Group Members
-- Nolan Kyhl
-- Miles Laning
+> Final Project for Programming Paradigms - CSE 30332
 
-### Language Support
-- English
-- Spanish
-- German
-- French
-- Portuguese
+![Home page preview](/assets/readme/preview.jpeg)
 
-### Setup
-- Pip install requests
-- Create a file named config.json within the src/ folder of this Django project.
-- This json file should have the following format:
-`{"username": "your-username", "password": "your-password", "access_token": "your-access_token"}`
-- Config.json configures access to the fake payment api created by the professor. Leave fields blank if you do not have credentials.
+**WordleND** is a remake of the popular game Wordle, developed using the Django framework in Python.
 
-### Errata
-- Game uses the US-keyboard and does not allow for special characters. If the word chosen has a special character, it's currently impossible to guess it.
+Our spin on the classic game includes language support for English, Spanish, German, French, and Portuguese users.
 
-### Future improvements
+## Project Structure
+```
+wordlend/
+├── src/
+│ ├── webapp/           # Django project package
+│ ├── wordleND/         # Django app module
+│ │ ├── languages/          # Word Banks
+│ │ ├── static/             # Static Assets
+│ │ ├── templates/          # HTML Templates
+│ │ ├── urls.py             # URL Routes
+│ │ └── views.py            # Views
+│ ├── db.sqlite3        # Local SQLite Database
+│ └── manage.py         # Django Entry Point (CLI tool)
+├── CONTRIBUTIONS.md
+├── README.md
+└── requirements.txt
+```
+
+## Getting Started
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run project locally
+python3 src/manage.py runserver
+```
+
+## Fake Payment API
+For class, we integrated with a payment api created by our professor. Other viewers may disregard.
+
+To use, create a file called `config.json` within the src/ folder of this Django project. This json file should have the following format:
+
+```
+{ 
+    "username": "your-username",
+    "password": "your-password",
+    "access_token": "your-access_token"
+}
+```
+
+## Notes
+
+As of now, WordleND uses the US-keyboard and does not allow for special characters, though target words in languages other than english may include accents. This is an area for further development.
+
+## Further Development
 - Foreign alphabet keyboards
-- Simplify Django template extension
-- Share game result 🟩🟨⬛
-- Flip animation occurs from left to right
+- Refactor Django template extension
+- Share game results 🟩🟨⬛
+- Add flip animation from left to right
+

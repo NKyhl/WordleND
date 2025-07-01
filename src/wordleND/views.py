@@ -17,7 +17,7 @@ from operator import countOf
 # Create your views here.
 def home(request):
     config = load_config('config.json')
-    access_token = config['access_token']
+    access_token = config.get('access_token', "")
     current_date = timezone.now().date()
     user = request.user
    
